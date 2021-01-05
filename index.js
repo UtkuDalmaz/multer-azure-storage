@@ -77,10 +77,15 @@ class MulterAzureStorage {
 
         var blob = "";
 
-        var user_id = req.body.user_id
-        var story = req.body.story
-        var type = req.body.type
-        var storyId = req.body.story_id
+        var user_id = req.body.user_id;
+        var story = req.body.story;
+        var type = req.body.type;
+        var storyId = req.body.story_id;
+
+        console.log(user_id);
+        console.log(story);
+        console.log(type);
+        console.log(storyId);
 
         if (type == "") type = "image";
         if (type == "image") {
