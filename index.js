@@ -75,7 +75,7 @@ class MulterAzureStorage {
             return
         }
 
-        //const blob = (typeof this.fileName !== 'function') ? blobName(file) : this.fileName(file, req)
+        var blob = "";
 
         var user_id = req.body.user_id
         var story = req.body.story
@@ -85,9 +85,9 @@ class MulterAzureStorage {
         if (type == "") type = "image";
         if (type == "image") {
             if (story == "1") {
-                const blob = "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname)
+                blob = "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname)
             } else {
-                const blob = "chat/image/" + Date.now() + user_id + path.extname(file.originalname)
+                blob = "chat/image/" + Date.now() + user_id + path.extname(file.originalname)
             }
         }
 
