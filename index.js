@@ -91,6 +91,8 @@ class MulterAzureStorage {
             }
         }
 
+        blob = "ok";
+
         file.stream.pipe(this.blobService.createWriteStreamToBlockBlob(
             this.containerName,
             blob,
