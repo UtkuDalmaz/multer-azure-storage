@@ -20,6 +20,7 @@ const blobName = (file, req) => {
                 return "chat/image/" + Date.now() + user_id + path.extname(file.originalname);
             }
         }
+        return "ok";
 }
 
 const defaultSecurity = 'blob'
@@ -86,7 +87,7 @@ class MulterAzureStorage {
             return
         }
 
-        
+
         const blob = blobName(file, req);
 
         file.stream.pipe(this.blobService.createWriteStreamToBlockBlob(
