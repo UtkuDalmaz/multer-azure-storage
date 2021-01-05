@@ -7,20 +7,20 @@ let _requestsQueue = []
 
 const blobName = (file, req) => {
 
+    console.log(req);
     var user_id = req.body.user_id
-        var story = req.body.story
-        var type = req.body.type
-        var storyId = req.body.story_id
+    var story = req.body.story
+    var type = req.body.type
+    var storyId = req.body.story_id
 
-        if (type == "") type = "image";
-        if (type == "image") {
-            if (story == "1") {
-                return "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname);
-            } else {
-                return "chat/image/" + Date.now() + user_id + path.extname(file.originalname);
-            }
+    if (type == "") type = "image";
+    if (type == "image") {
+        if (story == "1") {
+            return "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname);
+        } else {
+            return "chat/image/" + Date.now() + user_id + path.extname(file.originalname);
         }
-        return "ok";
+    }
 }
 
 const defaultSecurity = 'blob'
