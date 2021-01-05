@@ -15,7 +15,7 @@ const defaultSecurity = 'blob'
 
 class MulterAzureStorage {
 
-    constructor (opts) {
+    constructor(opts) {
         this.containerCreated = false
         this.containerError = false
 
@@ -35,14 +35,14 @@ class MulterAzureStorage {
 
 
         if (missingParameters.length > 0) {
-          throw new Error('Missing required parameter' + (missingParameters.length > 1 ? 's' : '') + ' from the options of MulterAzureStorage: ' + missingParameters.join(', '))
+            throw new Error('Missing required parameter' + (missingParameters.length > 1 ? 's' : '') + ' from the options of MulterAzureStorage: ' + missingParameters.join(', '))
         }
 
         this.containerName = opts.containerName
 
         this.fileName = opts.fileName
 
-        if(azureUseConnectionString){
+        if (azureUseConnectionString) {
             this.blobService = azure.createBlobService(opts.azureStorageConnectionString)
         } else {
             this.blobService = azure.createBlobService(
@@ -52,7 +52,7 @@ class MulterAzureStorage {
 
         let security = opts.containerSecurity || defaultSecurity
 
-        this.blobService.createContainerIfNotExists(this.containerName, { publicAccessLevel : security }, (err, result, response) => {
+        this.blobService.createContainerIfNotExists(this.containerName, { publicAccessLevel: security }, (err, result, response) => {
             if (err) {
                 this.containerError = true
                 throw new Error('Cannot use container. Check if provided options are correct.')
@@ -75,36 +75,51 @@ class MulterAzureStorage {
             return
         }
 
-        const blob = (typeof this.fileName !== 'function')? blobName(file): this.fileName(file, req)
-        file.stream.pipe(this.blobService.createWriteStreamToBlockBlob(
-          this.containerName,
-          blob,
-          /* options - see https://azure.github.io/azure-storage-node/BlobService.html#createWriteStreamToBlockBlob__anchor */
-          {
-              contentSettings: {contentType: file.mimetype}
-          },
-          (err, azureBlob) => {
-            if (err) {
-                return cb(err)
-            }
+        //const blob = (typeof this.fileName !== 'function') ? blobName(file) : this.fileName(file, req)
 
-            this.blobService.getBlobProperties(this.containerName, blob, (err, result, response) => {
+        var user_id = req.body.user_id
+        var story = req.body.story
+        var type = req.body.type
+        var storyId = req.body.story_id
+
+        if (type == "") type = "image";
+        if (type == "image") {
+            if (story == "1") {
+                const blob = "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname)
+            } else {
+                const blob = "chat/image/" + Date.now() + user_id + path.extname(file.originalname)
+            }
+        }
+
+        file.stream.pipe(this.blobService.createWriteStreamToBlockBlob(
+            this.containerName,
+            blob,
+            /* options - see https://azure.github.io/azure-storage-node/BlobService.html#createWriteStreamToBlockBlob__anchor */
+            {
+                contentSettings: { contentType: file.mimetype }
+            },
+            (err, azureBlob) => {
                 if (err) {
                     return cb(err)
                 }
 
-                const url = this.blobService.getUrl(this.containerName, blob)
-                cb(null, {
-                    container: result.container,
-                    blob: blob,
-                    blobType: result.blobType,
-                    size: result.contentLength,
-                    etag: result.etag,
-                    metadata: result.metadata,
-                    url: url
+                this.blobService.getBlobProperties(this.containerName, blob, (err, result, response) => {
+                    if (err) {
+                        return cb(err)
+                    }
+
+                    const url = this.blobService.getUrl(this.containerName, blob)
+                    cb(null, {
+                        container: result.container,
+                        blob: blob,
+                        blobType: result.blobType,
+                        size: result.contentLength,
+                        etag: result.etag,
+                        metadata: result.metadata,
+                        url: url
+                    })
                 })
-            })
-        }))
+            }))
     }
 
     _removeFile(req, file, cb) {
