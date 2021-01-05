@@ -12,9 +12,9 @@ const blobName = (file, req) => {
     var storyId = req.body.story_id
 
         if (story == "1") {
-            return "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname);
+            return "chat/images/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname);
         } else {
-            return "chat/image/" + Date.now() + user_id + path.extname(file.originalname);
+            return "chat/images/" + Date.now() + user_id + path.extname(file.originalname);
         }
 }
 
