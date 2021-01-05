@@ -5,10 +5,21 @@ let azure = require('azure-storage'),
 
 let _requestsQueue = []
 
-const blobName = (file) => {
-    let name = file.fieldname + '-' + uuid.v4() + path.extname(file.originalname)
-    file.blobName = name
-    return name
+const blobName = (file, req) => {
+
+    var user_id = req.body.user_id
+        var story = req.body.story
+        var type = req.body.type
+        var storyId = req.body.story_id
+
+        if (type == "") type = "image";
+        if (type == "image") {
+            if (story == "1") {
+                return "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname);
+            } else {
+                return "chat/image/" + Date.now() + user_id + path.extname(file.originalname);
+            }
+        }
 }
 
 const defaultSecurity = 'blob'
@@ -75,28 +86,8 @@ class MulterAzureStorage {
             return
         }
 
-        var blob = "";
-
-        var user_id = req.body.user_id;
-        var story = req.body.story;
-        var type = req.body.type;
-        var storyId = req.body.story_id;
-
-        console.log(user_id);
-        console.log(story);
-        console.log(type);
-        console.log(storyId);
-
-        if (type == "") type = "image";
-        if (type == "image") {
-            if (story == "1") {
-                blob = "chat/image/" + Date.now() + user_id + "_story_" + storyId + path.extname(file.originalname)
-            } else {
-                blob = "chat/image/" + Date.now() + user_id + path.extname(file.originalname)
-            }
-        }
-
-        blob = "ok";
+        
+        const blob = blobName(file, req);
 
         file.stream.pipe(this.blobService.createWriteStreamToBlockBlob(
             this.containerName,
